@@ -959,8 +959,8 @@
     <li><a href="#about">Sobre</a></li>
   </ul>
   <div class="nav-cta">
-    <a href="#" class="btn-ghost" onclick="openLogin(event)">Entrar</a>
-    <a href="#cta" class="btn-primary">Começar grátis</a>
+    <a href="#" class="btn-ghost" onclick="openModal(event,'login')">Entrar</a>
+    <a href="#" class="btn-primary" onclick="openModal(event,'register')">Começar grátis</a>
   </div>
 </nav>
 
@@ -984,7 +984,7 @@
   </p>
 
   <div class="hero-actions">
-    <a href="#cta" class="btn-primary-lg">Testar 90 dias grátis</a>
+    <a href="#" class="btn-primary-lg" onclick="openModal(event,'register')">Testar 90 dias grátis</a>
     <a href="#features" class="btn-outline-lg">Ver como funciona</a>
   </div>
 
@@ -1324,172 +1324,246 @@
     }
   });
 </script>
-<!-- LOGIN MODAL -->
-<div id="login-overlay" style="
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:999;
-  background:rgba(0,0,0,0.7);
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
-  align-items:center;
-  justify-content:center;
-" onclick="closeLoginOutside(event)">
+<!-- ── MODAL AUTH ── -->
+<div id="login-overlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);align-items:center;justify-content:center;" onclick="closeModalOutside(event)">
+  <div id="login-modal" style="background:#111113;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:40px 44px;width:100%;max-width:440px;position:relative;box-shadow:0 40px 80px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.04);">
 
-  <div id="login-modal" style="
-    background:#111113;
-    border:1px solid rgba(255,255,255,0.1);
-    border-radius:20px;
-    padding:48px 44px;
-    width:100%;
-    max-width:420px;
-    position:relative;
-    box-shadow:0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
-    animation:loginIn 0.3s cubic-bezier(0.16,1,0.3,1) both;
-  ">
-    <!-- close -->
-    <button onclick="closeLogin()" style="
-      position:absolute;
-      top:16px;right:16px;
-      background:transparent;
-      border:none;
-      cursor:pointer;
-      color:#6B6B72;
-      padding:6px;
-      border-radius:8px;
-      display:flex;
-      transition:color 0.2s;
-    " onmouseover="this.style.color='#F2F2F0'" onmouseout="this.style.color='#6B6B72'">
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
+    <!-- fechar -->
+    <button onclick="closeModal()" style="position:absolute;top:16px;right:16px;background:transparent;border:none;cursor:pointer;color:#6B6B72;padding:6px;border-radius:8px;display:flex;" onmouseover="this.style.color='#F2F2F0'" onmouseout="this.style.color='#6B6B72'">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
     </button>
 
     <!-- logo -->
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:32px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:28px;">
       <div style="width:32px;height:32px;background:#C8F047;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:16px;color:#0A0A0B;font-style:italic;flex-shrink:0;">B</div>
       <span style="font-size:15px;font-weight:600;color:#F2F2F0;letter-spacing:-0.01em;">BG Academy</span>
     </div>
 
-    <h2 style="font-size:24px;font-weight:300;color:#F2F2F0;letter-spacing:-0.02em;line-height:1.15;margin-bottom:6px;">
-      Bem-vindo de volta
-    </h2>
-    <p style="font-size:14px;color:#6B6B72;margin-bottom:32px;">Entre na sua conta para acessar o painel.</p>
+    <!-- abas -->
+    <div style="display:flex;background:#18181C;border-radius:10px;padding:4px;margin-bottom:28px;">
+      <button id="tab-login" onclick="switchTab('login')" style="flex:1;padding:8px;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;background:#C8F047;color:#0A0A0B;">Entrar</button>
+      <button id="tab-register" onclick="switchTab('register')" style="flex:1;padding:8px;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;background:transparent;color:#6B6B72;">Criar conta</button>
+    </div>
+
+    <!-- erro -->
+    <div id="auth-error" style="display:none;background:rgba(255,77,77,0.1);border:1px solid rgba(255,77,77,0.25);border-radius:8px;padding:10px 14px;font-size:13px;color:#FF9999;margin-bottom:16px;"></div>
+    <!-- sucesso -->
+    <div id="auth-success" style="display:none;background:rgba(200,240,71,0.08);border:1px solid rgba(200,240,71,0.2);border-radius:8px;padding:10px 14px;font-size:13px;color:#C8F047;margin-bottom:16px;"></div>
+
+    <!-- botão Google -->
+    <button onclick="loginGoogle()" style="width:100%;background:#18181C;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 16px;font-size:14px;font-weight:500;color:#F2F2F0;font-family:'DM Sans',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:border-color 0.2s,background 0.2s;margin-bottom:20px;" onmouseover="this.style.borderColor='rgba(255,255,255,0.25)';this.style.background='#1f1f23'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.background='#18181C'">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+        <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/>
+        <path d="M3.964 10.706A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.038l3.007-2.332z" fill="#FBBC05"/>
+        <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.962L3.964 7.294C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+      </svg>
+      <span id="google-btn-text">Continuar com Google</span>
+    </button>
+
+    <!-- divisor -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
+      <span style="font-size:12px;color:#5A5A63;font-family:'DM Mono',monospace;">ou</span>
+      <div style="flex:1;height:1px;background:rgba(255,255,255,0.07);"></div>
+    </div>
+
+    <!-- campo nome (só no cadastro) -->
+    <div id="field-nome" style="display:none;margin-bottom:14px;">
+      <label style="display:block;font-size:12px;font-weight:500;color:#9A9AA5;margin-bottom:8px;letter-spacing:0.02em;text-transform:uppercase;">Nome completo</label>
+      <input id="auth-nome" type="text" placeholder="Seu nome" style="width:100%;background:#18181C;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 16px;font-size:14px;color:#F2F2F0;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(200,240,71,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+    </div>
 
     <!-- email -->
-    <div style="margin-bottom:16px;">
+    <div style="margin-bottom:14px;">
       <label style="display:block;font-size:12px;font-weight:500;color:#9A9AA5;margin-bottom:8px;letter-spacing:0.02em;text-transform:uppercase;">E-mail</label>
-      <input id="login-email" type="email" placeholder="seu@email.com" style="
-        width:100%;
-        background:#18181C;
-        border:1px solid rgba(255,255,255,0.1);
-        border-radius:10px;
-        padding:12px 16px;
-        font-size:14px;
-        color:#F2F2F0;
-        font-family:'DM Sans',sans-serif;
-        outline:none;
-        transition:border-color 0.2s;
-      " onfocus="this.style.borderColor='rgba(200,240,71,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+      <input id="auth-email" type="email" placeholder="seu@email.com" style="width:100%;background:#18181C;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 16px;font-size:14px;color:#F2F2F0;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(200,240,71,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
     </div>
 
     <!-- senha -->
     <div style="margin-bottom:8px;">
       <label style="display:block;font-size:12px;font-weight:500;color:#9A9AA5;margin-bottom:8px;letter-spacing:0.02em;text-transform:uppercase;">Senha</label>
       <div style="position:relative;">
-        <input id="login-senha" type="password" placeholder="••••••••" style="
-          width:100%;
-          background:#18181C;
-          border:1px solid rgba(255,255,255,0.1);
-          border-radius:10px;
-          padding:12px 44px 12px 16px;
-          font-size:14px;
-          color:#F2F2F0;
-          font-family:'DM Sans',sans-serif;
-          outline:none;
-          transition:border-color 0.2s;
-        " onfocus="this.style.borderColor='rgba(200,240,71,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
-        <button onclick="toggleLoginPw()" style="
-          position:absolute;right:14px;top:50%;transform:translateY(-50%);
-          background:transparent;border:none;cursor:pointer;
-          color:#6B6B72;padding:0;display:flex;
-          transition:color 0.2s;
-        " onmouseover="this.style.color='#9A9AA5'" onmouseout="this.style.color='#6B6B72'">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <ellipse cx="8" cy="8" rx="7" ry="4.5" stroke="currentColor" stroke-width="1.2"/>
-            <circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.2"/>
-          </svg>
+        <input id="auth-senha" type="password" placeholder="••••••••" style="width:100%;background:#18181C;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 44px 12px 16px;font-size:14px;color:#F2F2F0;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(200,240,71,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" onkeydown="if(event.key==='Enter')submitAuth()">
+        <button onclick="togglePw()" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:transparent;border:none;cursor:pointer;color:#6B6B72;padding:0;display:flex;" onmouseover="this.style.color='#9A9AA5'" onmouseout="this.style.color='#6B6B72'">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><ellipse cx="8" cy="8" rx="7" ry="4.5" stroke="currentColor" stroke-width="1.2"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.2"/></svg>
         </button>
       </div>
     </div>
 
-    <div style="text-align:right;margin-bottom:28px;">
-      <a href="#" style="font-size:12px;color:#6B6B72;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#C8F047'" onmouseout="this.style.color='#6B6B72'">Esqueci minha senha</a>
+    <!-- esqueci (só no login) -->
+    <div id="field-forgot" style="text-align:right;margin-bottom:24px;">
+      <a href="#" style="font-size:12px;color:#6B6B72;text-decoration:none;" onmouseover="this.style.color='#C8F047'" onmouseout="this.style.color='#6B6B72'">Esqueci minha senha</a>
     </div>
+    <div id="field-forgot-spacer" style="display:none;margin-bottom:24px;"></div>
 
     <!-- submit -->
-    <button onclick="submitLogin()" style="
-      width:100%;
-      background:#C8F047;
-      color:#0A0A0B;
-      border:none;
-      border-radius:10px;
-      padding:13px;
-      font-size:14px;
-      font-weight:600;
-      font-family:'DM Sans',sans-serif;
-      cursor:pointer;
-      letter-spacing:-0.01em;
-      transition:background 0.2s, transform 0.15s;
-    " onmouseover="this.style.background='#9EE020';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#C8F047';this.style.transform='translateY(0)'">
-      Entrar
+    <button id="auth-btn" onclick="submitAuth()" style="width:100%;background:#C8F047;color:#0A0A0B;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;letter-spacing:-0.01em;transition:background 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;" onmouseover="this.style.background='#9EE020'" onmouseout="this.style.background='#C8F047'">
+      <span id="auth-btn-text">Entrar</span>
+      <svg id="auth-spinner" style="display:none;animation:spin 0.8s linear infinite;" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="rgba(0,0,0,0.3)" stroke-width="2"/><path d="M8 2a6 6 0 016 6" stroke="#0A0A0B" stroke-width="2" stroke-linecap="round"/></svg>
     </button>
 
-    <p style="font-size:13px;color:#6B6B72;text-align:center;margin-top:24px;">
-      Não tem conta? <a href="#cta" onclick="closeLogin()" style="color:#C8F047;text-decoration:none;font-weight:500;">Começar grátis →</a>
+    <p style="font-size:13px;color:#6B6B72;text-align:center;margin-top:20px;">
+      <span id="switch-text">Não tem conta?</span>
+      <a href="#" id="switch-link" onclick="switchTab(currentTab==='login'?'register':'login');return false;" style="color:#C8F047;text-decoration:none;font-weight:500;margin-left:4px;">Criar conta grátis →</a>
     </p>
   </div>
 </div>
 
 <style>
-  @keyframes loginIn {
-    from { opacity:0; transform: scale(0.95) translateY(12px); }
-    to   { opacity:1; transform: scale(1)    translateY(0); }
-  }
+  @keyframes loginIn { from{opacity:0;transform:scale(0.95) translateY(12px)} to{opacity:1;transform:scale(1) translateY(0)} }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 
 <script>
-  function openLogin(e) {
-    e.preventDefault();
-    const overlay = document.getElementById('login-overlay');
-    overlay.style.display = 'flex';
-    requestAnimationFrame(() => {
-      document.getElementById('login-modal').style.animation = 'loginIn 0.3s cubic-bezier(0.16,1,0.3,1) both';
-    });
-    setTimeout(() => document.getElementById('login-email').focus(), 50);
+  const API = 'https://surprising-charm-production-533e.up.railway.app';
+  let currentTab = 'login';
+
+  // ── Pega token do Google callback ────────────────────────────
+  (function checkOAuthReturn() {
+    const params = new URLSearchParams(window.location.search);
+    const token  = params.get('token');
+    const err    = params.get('auth');
+    if (token) {
+      localStorage.setItem('bg_token', token);
+      window.history.replaceState({}, '', window.location.pathname);
+      fetchUserAndGreet(token);
+    }
+    if (err === 'error') {
+      window.history.replaceState({}, '', window.location.pathname);
+      openModal({ preventDefault: () => {} }, 'login');
+      showError('Falha no login com Google. Tente novamente.');
+    }
+  })();
+
+  async function fetchUserAndGreet(token) {
+    try {
+      const res  = await fetch(`${API}/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      if (data.user) alert(`Olá, ${data.user.name}! ✓ Autenticado.\n\n(Redirecione pro dashboard aqui)`);
+    } catch {}
   }
 
-  function closeLogin() {
+  // ── Abrir/fechar modal ───────────────────────────────────────
+  function openModal(e, tab = 'login') {
+    e.preventDefault();
+    document.getElementById('login-overlay').style.display = 'flex';
+    document.getElementById('login-modal').style.animation = 'loginIn 0.3s cubic-bezier(0.16,1,0.3,1) both';
+    switchTab(tab);
+    clearMessages();
+  }
+
+  function closeModal() {
     document.getElementById('login-overlay').style.display = 'none';
   }
 
-  function closeLoginOutside(e) {
-    if (e.target === document.getElementById('login-overlay')) closeLogin();
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('login-overlay')) closeModal();
   }
 
-  function toggleLoginPw() {
-    const inp = document.getElementById('login-senha');
+  // ── Troca de aba ─────────────────────────────────────────────
+  function switchTab(tab) {
+    currentTab = tab;
+    clearMessages();
+
+    const isLogin = tab === 'login';
+
+    // abas visuais
+    document.getElementById('tab-login').style.background    = isLogin ? '#C8F047' : 'transparent';
+    document.getElementById('tab-login').style.color         = isLogin ? '#0A0A0B' : '#6B6B72';
+    document.getElementById('tab-register').style.background = !isLogin ? '#C8F047' : 'transparent';
+    document.getElementById('tab-register').style.color      = !isLogin ? '#0A0A0B' : '#6B6B72';
+
+    // campos
+    document.getElementById('field-nome').style.display          = isLogin ? 'none' : 'block';
+    document.getElementById('field-forgot').style.display        = isLogin ? 'block' : 'none';
+    document.getElementById('field-forgot-spacer').style.display = isLogin ? 'none' : 'block';
+
+    // botão e textos
+    document.getElementById('auth-btn-text').textContent  = isLogin ? 'Entrar' : 'Criar conta grátis';
+    document.getElementById('google-btn-text').textContent = isLogin ? 'Continuar com Google' : 'Cadastrar com Google';
+    document.getElementById('switch-text').textContent    = isLogin ? 'Não tem conta?' : 'Já tem conta?';
+    document.getElementById('switch-link').textContent    = isLogin ? 'Criar conta grátis →' : 'Entrar →';
+
+    // foco
+    setTimeout(() => document.getElementById(isLogin ? 'auth-email' : 'auth-nome').focus(), 50);
+  }
+
+  // ── Feedback ─────────────────────────────────────────────────
+  function showError(msg) {
+    const el = document.getElementById('auth-error');
+    el.textContent = msg; el.style.display = 'block';
+    document.getElementById('auth-success').style.display = 'none';
+  }
+
+  function showSuccess(msg) {
+    const el = document.getElementById('auth-success');
+    el.textContent = msg; el.style.display = 'block';
+    document.getElementById('auth-error').style.display = 'none';
+  }
+
+  function clearMessages() {
+    document.getElementById('auth-error').style.display   = 'none';
+    document.getElementById('auth-success').style.display = 'none';
+  }
+
+  function setLoading(on) {
+    document.getElementById('auth-btn-text').textContent  = on ? (currentTab === 'login' ? 'Entrando...' : 'Criando conta...') : (currentTab === 'login' ? 'Entrar' : 'Criar conta grátis');
+    document.getElementById('auth-spinner').style.display = on ? 'block' : 'none';
+    document.getElementById('auth-btn').disabled          = on;
+  }
+
+  function togglePw() {
+    const inp = document.getElementById('auth-senha');
     inp.type = inp.type === 'password' ? 'text' : 'password';
   }
 
-  function submitLogin() {
-    alert('→ Autenticação (conecte seu backend aqui)');
+  // ── Submit (login ou cadastro) ───────────────────────────────
+  async function submitAuth() {
+    clearMessages();
+    const email    = document.getElementById('auth-email').value.trim();
+    const password = document.getElementById('auth-senha').value;
+    const name     = document.getElementById('auth-nome').value.trim();
+
+    if (currentTab === 'register' && !name) { showError('Preencha seu nome.'); return; }
+    if (!email || !password)               { showError('Preencha e-mail e senha.'); return; }
+    if (currentTab === 'register' && password.length < 8) { showError('Senha deve ter ao menos 8 caracteres.'); return; }
+
+    setLoading(true);
+    try {
+      const endpoint = currentTab === 'login' ? '/auth/login' : '/auth/register';
+      const body     = currentTab === 'login' ? { email, password } : { name, email, password };
+
+      const res  = await fetch(`${API}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+
+      if (!res.ok) { showError(data.error || 'Algo deu errado.'); return; }
+
+      localStorage.setItem('bg_token', data.token);
+
+      if (currentTab === 'register') {
+        showSuccess(`Conta criada! Bem-vindo, ${data.user.name} 🎉`);
+        setTimeout(() => closeModal(), 2000);
+      } else {
+        closeModal();
+        alert(`Olá, ${data.user.name}! ✓ Login feito.\n\n(Redirecione pro dashboard aqui)`);
+      }
+    } catch {
+      showError('Erro de conexão. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
   }
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeLogin();
-  });
+  function loginGoogle() {
+    window.location.href = `${API}/auth/google`;
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 </script>
 
 </body>
