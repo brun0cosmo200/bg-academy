@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BG Academy — Seu negócio de personal, sem caos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0A0A0B;
+    --surface: #111113;
+    --surface2: #18181C;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --accent: #C8F047;
+    --accent2: #9EE020;
+    --text: #F2F2F0;
+    --muted: #6B6B72;
+    --muted2: #9A9AA5;
+    --red: #FF4D4D;
+    --amber: #F5A623;
+    --green: #C8F047;
+    --serif: 'Instrument Serif', serif;
+    --sans: 'DM Sans', sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── NOISE TEXTURE ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    height: 64px;
+    background: rgba(10,10,11,0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .logo-mark {
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-size: 16px;
+    color: #0A0A0B;
+    font-weight: 400;
+    font-style: italic;
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+    color: var(--muted2);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-cta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn-ghost {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted2);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: color 0.2s;
+    text-decoration: none;
+  }
+  .btn-ghost:hover { color: var(--text); }
+
+  .btn-primary {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0A0A0B;
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+    padding: 9px 20px;
+    border-radius: 8px;
+    transition: background 0.2s, transform 0.15s;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+  }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 24px 80px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(ellipse at center, rgba(200,240,71,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(200,240,71,0.1);
+    border: 1px solid rgba(200,240,71,0.2);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 500;
+    font-family: var(--mono);
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .hero-title {
+    font-size: clamp(42px, 7vw, 80px);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    max-width: 800px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .hero-title em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--muted2);
+    max-width: 520px;
+    margin: 24px auto 0;
+    line-height: 1.6;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 40px;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .btn-primary-lg {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0A0A0B;
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+    padding: 14px 28px;
+    border-radius: 10px;
+    transition: background 0.2s, transform 0.15s;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+  }
+  .btn-primary-lg:hover { background: var(--accent2); transform: translateY(-2px); }
+
+  .btn-outline-lg {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--muted2);
+    background: transparent;
+    border: 1px solid var(--border2);
+    cursor: pointer;
+    padding: 14px 28px;
+    border-radius: 10px;
+    transition: border-color 0.2s, color 0.2s, transform 0.15s;
+    text-decoration: none;
+  }
+  .btn-outline-lg:hover { border-color: rgba(255,255,255,0.25); color: var(--text); transform: translateY(-2px); }
+
+  .hero-proof {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 56px;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+
+  .proof-avatars {
+    display: flex;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted2);
+    margin-left: -8px;
+    flex-shrink: 0;
+  }
+  .avatar:first-child { margin-left: 0; }
+  .av1 { background: #1e2a1a; color: #C8F047; }
+  .av2 { background: #1a1e2a; color: #7A9FF5; }
+  .av3 { background: #2a1a1e; color: #F57A7A; }
+  .av4 { background: #2a261a; color: #F5C97A; }
+
+  .proof-text {
+    font-size: 13px;
+    color: var(--muted2);
+  }
+  .proof-text strong { color: var(--text); font-weight: 500; }
+
+  /* ── DASHBOARD PREVIEW ── */
+  .preview-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 960px;
+    margin: 80px auto 0;
+    animation: fadeUp 0.8s 0.5s ease both;
+  }
+
+  .preview-glow {
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 200px;
+    background: radial-gradient(ellipse, rgba(200,240,71,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .preview-frame {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 40px 80px rgba(0,0,0,0.6);
+  }
+
+  .frame-bar {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .frame-dots { display: flex; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #FF5F57; }
+  .dot-y { background: #FFBD2E; }
+  .dot-g { background: #28C840; }
+
+  .frame-url {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-family: var(--mono);
+    color: var(--muted);
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  /* ── MINI DASHBOARD ── */
+  .mini-dash {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 420px;
+  }
+
+  .mini-sidebar {
+    background: var(--surface2);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+  }
+
+  .mini-sidebar-logo {
+    padding: 0 20px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+
+  .mini-logo-mark {
+    width: 24px;
+    height: 24px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-size: 12px;
+    color: #0A0A0B;
+    font-style: italic;
+  }
+
+  .mini-nav-item {
+    padding: 8px 20px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted2);
+    cursor: pointer;
+    border-radius: 0;
+    transition: background 0.15s;
+  }
+  .mini-nav-item:hover { background: rgba(255,255,255,0.04); }
+  .mini-nav-item.active { color: var(--text); background: rgba(200,240,71,0.08); border-right: 2px solid var(--accent); }
+
+  .mini-icon { width: 16px; height: 16px; opacity: 0.7; }
+
+  .mini-content { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+
+  .mini-header { display: flex; align-items: center; justify-content: space-between; }
+  .mini-title { font-size: 16px; font-weight: 600; color: var(--text); }
+  .mini-date { font-size: 12px; font-family: var(--mono); color: var(--muted); }
+
+  .mini-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .mini-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+  }
+
+  .mini-card-label { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .mini-card-val { font-size: 24px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; }
+  .mini-card-delta { font-size: 11px; color: var(--green); margin-top: 4px; }
+  .delta-red { color: var(--red); }
+
+  .mini-table-label { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+
+  .aluno-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .aluno-row:last-child { border-bottom: none; }
+
+  .aluno-av {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .aluno-info { flex: 1; }
+  .aluno-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .aluno-plan { font-size: 11px; color: var(--muted); }
+
+  .status-badge {
+    font-size: 11px;
+    font-family: var(--mono);
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 100px;
+  }
+  .status-green { background: rgba(200,240,71,0.12); color: var(--green); }
+  .status-amber { background: rgba(245,166,35,0.12); color: var(--amber); }
+  .status-red { background: rgba(255,77,77,0.12); color: var(--red); }
+
+  .alert-bar {
+    background: rgba(255,77,77,0.08);
+    border: 1px solid rgba(255,77,77,0.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #FF9999;
+  }
+
+  .alert-dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; flex-shrink: 0; }
+
+  /* ── SECTIONS ── */
+  section { position: relative; z-index: 1; }
+
+  .section-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ── PROBLEM SECTION ── */
+  .problem {
+    padding: 120px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-family: var(--mono);
+    font-weight: 500;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--text);
+    max-width: 640px;
+  }
+
+  .section-title em {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--muted2);
+  }
+
+  .chaos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-top: 60px;
+  }
+
+  .chaos-item {
+    background: var(--bg);
+    padding: 32px 28px;
+    transition: background 0.2s;
+  }
+  .chaos-item:hover { background: var(--surface); }
+
+  .chaos-icon {
+    font-size: 28px;
+    margin-bottom: 16px;
+    display: block;
+    filter: grayscale(0.3);
+  }
+
+  .chaos-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .chaos-desc {
+    font-size: 13px;
+    color: var(--muted2);
+    line-height: 1.5;
+  }
+
+  .chaos-cross {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--red);
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ── FEATURES ── */
+  .features {
+    padding: 120px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .features-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: end;
+    margin-bottom: 80px;
+  }
+
+  .features-desc {
+    font-size: 16px;
+    color: var(--muted2);
+    line-height: 1.7;
+    align-self: end;
+  }
+
+  .feat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .feat-item {
+    background: var(--bg);
+    padding: 36px 32px;
+    position: relative;
+    transition: background 0.2s;
+  }
+  .feat-item:hover { background: var(--surface); }
+
+  .feat-item.highlight {
+    background: rgba(200,240,71,0.04);
+  }
+  .feat-item.highlight:hover { background: rgba(200,240,71,0.07); }
+
+  .feat-num {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .feat-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .feat-desc {
+    font-size: 14px;
+    color: var(--muted2);
+    line-height: 1.6;
+  }
+
+  .feat-accent {
+    position: absolute;
+    top: 32px;
+    right: 32px;
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  /* ── PRICING ── */
+  .pricing {
+    padding: 120px 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-top: 60px;
+    text-align: left;
+  }
+
+  .plan {
+    background: var(--bg);
+    padding: 40px 36px;
+    position: relative;
+  }
+
+  .plan.featured {
+    background: var(--surface);
+  }
+
+  .plan-label {
+    font-size: 11px;
+    font-family: var(--mono);
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 24px;
+  }
+
+  .plan.featured .plan-label {
+    color: var(--accent);
+  }
+
+  .plan-price {
+    font-size: 48px;
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .plan-price sup {
+    font-size: 20px;
+    font-weight: 400;
+    vertical-align: super;
+  }
+
+  .plan-cycle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 32px;
+    font-family: var(--mono);
+  }
+
+  .plan-divider {
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 28px;
+  }
+
+  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 14px; margin-bottom: 36px; }
+
+  .plan-features li {
+    font-size: 14px;
+    color: var(--muted2);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.4;
+  }
+
+  .plan-features li::before {
+    content: '—';
+    color: var(--muted);
+    flex-shrink: 0;
+    font-family: var(--mono);
+  }
+
+  .plan.featured .plan-features li::before {
+    content: '✓';
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .plan-btn {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    letter-spacing: -0.01em;
+  }
+
+  .plan-btn-outline {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--muted2);
+  }
+  .plan-btn-outline:hover { border-color: rgba(255,255,255,0.25); color: var(--text); }
+
+  .plan-btn-accent {
+    background: var(--accent);
+    color: #0A0A0B;
+  }
+  .plan-btn-accent:hover { background: var(--accent2); transform: translateY(-1px); }
+
+  .featured-badge {
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: #0A0A0B;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 0 0 8px 8px;
+    font-family: var(--mono);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    padding: 120px 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .cta-box {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 80px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-box::before {
+    content: '';
+    position: absolute;
+    top: -150px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(200,240,71,0.07) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .cta-title {
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin-bottom: 20px;
+  }
+
+  .cta-title em {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .cta-sub {
+    font-size: 17px;
+    color: var(--muted2);
+    margin-bottom: 40px;
+  }
+
+  .cta-form {
+    display: flex;
+    gap: 12px;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .cta-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 13px 16px;
+    font-size: 14px;
+    color: var(--text);
+    font-family: var(--sans);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .cta-input::placeholder { color: var(--muted); }
+  .cta-input:focus { border-color: rgba(200,240,71,0.4); }
+
+  .cta-fine {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 14px;
+    font-family: var(--mono);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 24px;
+  }
+
+  .footer-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-copy {
+    font-size: 13px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--muted2); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hero-actions { flex-direction: column; }
+    .hero-proof { flex-direction: column; gap: 12px; }
+    .mini-dash { grid-template-columns: 1fr; }
+    .mini-sidebar { display: none; }
+    .mini-cards { grid-template-columns: repeat(2, 1fr); }
+    .features-header { grid-template-columns: 1fr; }
+    .feat-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .cta-form { flex-direction: column; }
+    .footer-inner { flex-direction: column; gap: 20px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="logo-mark">BG</div>
+    <span class="logo-text">BG Academy</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Funcionalidades</a></li>
+    <li><a href="#pricing">Planos</a></li>
+    <li><a href="#about">Sobre</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="#" class="btn-ghost" onclick="openLogin(event)">Entrar</a>
+    <a href="#cta" class="btn-primary">Começar grátis</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-grid"></div>
+
+  <span class="badge">
+    <span class="badge-dot"></span>
+    Beta aberto · Primeiras 50 vagas gratuitas
+  </span>
+
+  <h1 class="hero-title">
+    Seu negócio de personal,<br>
+    <em>sem o caos</em> operacional
+  </h1>
+
+  <p class="hero-sub">
+    Substitua WhatsApp, planilha e PDF por um único sistema que avisa quando um aluno está sumindo — antes de ele cancelar.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#cta" class="btn-primary-lg">Testar 90 dias grátis</a>
+    <a href="#features" class="btn-outline-lg">Ver como funciona</a>
+  </div>
+
+  <div class="hero-proof">
+    <div class="proof-avatars">
+      <div class="avatar av1">MA</div>
+      <div class="avatar av2">RF</div>
+      <div class="avatar av3">JS</div>
+      <div class="avatar av4">PL</div>
+    </div>
+    <p class="proof-text">
+      <strong>47 personais</strong> já estão na fila de beta
+    </p>
+  </div>
+
+  <!-- MINI DASHBOARD PREVIEW -->
+  <div class="preview-wrap">
+    <div class="preview-glow"></div>
+    <div class="preview-frame">
+      <div class="frame-bar">
+        <div class="frame-dots">
+          <div class="dot dot-r"></div>
+          <div class="dot dot-y"></div>
+          <div class="dot dot-g"></div>
+        </div>
+        <div class="frame-url">app.bgacademy.com.br/dashboard</div>
+      </div>
+      <div class="mini-dash">
+        <div class="mini-sidebar">
+          <div class="mini-sidebar-logo">
+            <div class="mini-logo-mark">BG</div>
+            BG Academy
+          </div>
+          <div class="mini-nav-item active">
+            <svg class="mini-icon" viewBox="0 0 16 16" fill="none">
+              <rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+              <rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+              <rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+              <rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+            </svg>
+            Dashboard
+          </div>
+          <div class="mini-nav-item">
+            <svg class="mini-icon" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            Alunos
+          </div>
+          <div class="mini-nav-item">
+            <svg class="mini-icon" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M3 4h6M3 12h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            Treinos
+          </div>
+          <div class="mini-nav-item">
+            <svg class="mini-icon" viewBox="0 0 16 16" fill="none">
+              <path d="M2 12V6l6-4 6 4v6l-6 2-6-2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+            </svg>
+            Financeiro
+          </div>
+          <div class="mini-nav-item">
+            <svg class="mini-icon" viewBox="0 0 16 16" fill="none">
+              <path d="M13 11l-5-7-5 7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Alertas
+          </div>
+        </div>
+
+        <div class="mini-content">
+          <div class="mini-header">
+            <span class="mini-title">Visão geral</span>
+            <span class="mini-date">Mai 2026</span>
+          </div>
+
+          <div class="alert-bar">
+            <div class="alert-dot"></div>
+            <span><strong>2 alunos</strong> sem treinar há mais de 7 dias — risco de cancelamento</span>
+          </div>
+
+          <div class="mini-cards">
+            <div class="mini-card">
+              <div class="mini-card-label">Alunos ativos</div>
+              <div class="mini-card-val">18</div>
+              <div class="mini-card-delta">↑ +3 esse mês</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-card-label">MRR</div>
+              <div class="mini-card-val">R$4.8k</div>
+              <div class="mini-card-delta">↑ +12%</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-card-label">Em risco</div>
+              <div class="mini-card-val" style="color:var(--red)">2</div>
+              <div class="mini-card-delta delta-red">↑ atenção</div>
+            </div>
+          </div>
+
+          <div>
+            <div class="mini-table-label">Engajamento dos alunos</div>
+            <div class="aluno-row">
+              <div class="aluno-av av1" style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">MA</div>
+              <div class="aluno-info">
+                <div class="aluno-name">Marina Alves</div>
+                <div class="aluno-plan">Plano Mensal · treinou ontem</div>
+              </div>
+              <span class="status-badge status-green">Ativo</span>
+            </div>
+            <div class="aluno-row">
+              <div class="aluno-av av4" style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">RP</div>
+              <div class="aluno-info">
+                <div class="aluno-name">Rodrigo Pinto</div>
+                <div class="aluno-plan">Plano Trimestral · 5 dias sem treinar</div>
+              </div>
+              <span class="status-badge status-amber">Atenção</span>
+            </div>
+            <div class="aluno-row">
+              <div class="aluno-av av3" style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">JF</div>
+              <div class="aluno-info">
+                <div class="aluno-name">Julia Ferreira</div>
+                <div class="aluno-plan">Plano Mensal · 9 dias sem treinar</div>
+              </div>
+              <span class="status-badge status-red">Risco</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem">
+  <div class="section-inner">
+    <div class="section-label">O problema</div>
+    <h2 class="section-title reveal">
+      Personal online usa<br>6 ferramentas<br>
+      <em>para fazer 1 trabalho</em>
+    </h2>
+
+    <div class="chaos-grid reveal">
+      <div class="chaos-item">
+        <span class="chaos-icon">💬</span>
+        <div class="chaos-name">WhatsApp</div>
+        <div class="chaos-desc">Comunicação, cobrança, envio de treino, suporte. Tudo misturado.</div>
+        <div class="chaos-cross">✕ Zero controle</div>
+      </div>
+      <div class="chaos-item">
+        <span class="chaos-icon">📊</span>
+        <div class="chaos-name">Google Sheets</div>
+        <div class="chaos-desc">Evolução de alunos, pagamentos, fichas. Atualizado manualmente.</div>
+        <div class="chaos-cross">✕ Sempre desatualizado</div>
+      </div>
+      <div class="chaos-item">
+        <span class="chaos-icon">📄</span>
+        <div class="chaos-name">PDF / Drive</div>
+        <div class="chaos-desc">Treinos enviados por arquivo. Aluno não abre. Personal não sabe.</div>
+        <div class="chaos-cross">✕ Invisível</div>
+      </div>
+      <div class="chaos-item">
+        <span class="chaos-icon">📓</span>
+        <div class="chaos-name">Notion</div>
+        <div class="chaos-desc">Organização interna que só o personal acessa. Não escala.</div>
+        <div class="chaos-cross">✕ Não conectado</div>
+      </div>
+      <div class="chaos-item">
+        <span class="chaos-icon">📱</span>
+        <div class="chaos-name">Tecnofit / TreinoBR</div>
+        <div class="chaos-desc">Complexo demais. Aluno não usa. Personal desiste em 2 semanas.</div>
+        <div class="chaos-cross">✕ Abandono alto</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-inner">
+    <div class="features-header reveal">
+      <div>
+        <div class="section-label">Funcionalidades</div>
+        <h2 class="section-title">O que você<br>realmente <em>precisa</em></h2>
+      </div>
+      <p class="features-desc">
+        Nada de 200 configurações que você nunca vai usar. Só o essencial — construído para personal online que quer crescer sem contratar assistente.
+      </p>
+    </div>
+
+    <div class="feat-grid reveal">
+      <div class="feat-item highlight">
+        <div class="feat-accent"></div>
+        <div class="feat-num">01</div>
+        <div class="feat-title">Radar de risco de churn</div>
+        <div class="feat-desc">Semáforo por aluno. Verde, amarelo, vermelho. Saiba quem está sumindo antes de ele cancelar — com tempo de agir.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-num">02</div>
+        <div class="feat-title">Treino em 1 clique</div>
+        <div class="feat-desc">Monte, envie e o aluno confirma execução pelo celular. Sem app para instalar. Sem PDF perdido no Drive.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-num">03</div>
+        <div class="feat-title">Cobrança automática</div>
+        <div class="feat-desc">PIX, boleto e cartão integrados. Receba em dia, sem cobrar manualmente pelo WhatsApp nunca mais.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-num">04</div>
+        <div class="feat-title">Alertas inteligentes</div>
+        <div class="feat-desc">Notificação automática quando aluno some por 3, 5 ou 7 dias. Você escolhe o gatilho, o sistema te avisa.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-num">05</div>
+        <div class="feat-title">Painel financeiro</div>
+        <div class="feat-desc">MRR, inadimplentes, churn mensal. Os números do seu negócio em tempo real, sem planilha.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-num">06</div>
+        <div class="feat-title">Mobile-first de verdade</div>
+        <div class="feat-desc">Funciona no celular do personal e do aluno sem instalar nada. PWA carrega em 2 segundos.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="section-inner">
+    <div class="section-label reveal">Planos</div>
+    <h2 class="section-title reveal" style="margin: 0 auto; text-align:center;">
+      Simples. <em>Sem surpresa.</em>
+    </h2>
+    <p style="color:var(--muted2);font-size:16px;margin-top:16px;" class="reveal">
+      Se o sistema não te ajudar a reter 1 aluno por mês, o custo se paga sozinho.
+    </p>
+
+    <div class="pricing-grid reveal">
+      <div class="plan">
+        <div class="plan-label">Starter</div>
+        <div class="plan-price"><sup>R$</sup>97</div>
+        <div class="plan-cycle">/mês · até 10 alunos</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li>Radar de churn básico</li>
+          <li>Envio de treinos ilimitado</li>
+          <li>Checkin pelo aluno</li>
+          <li>Cobrança automática</li>
+          <li>Suporte por email</li>
+        </ul>
+        <button class="plan-btn plan-btn-outline">Começar grátis</button>
+      </div>
+
+      <div class="plan featured">
+        <div class="featured-badge">MAIS POPULAR</div>
+        <div class="plan-label">Pro</div>
+        <div class="plan-price"><sup>R$</sup>197</div>
+        <div class="plan-cycle">/mês · até 30 alunos</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li>Tudo do Starter</li>
+          <li>Alertas automáticos de risco</li>
+          <li>Painel financeiro completo</li>
+          <li>Histórico de evolução do aluno</li>
+          <li>Relatório mensal de retenção</li>
+          <li>Suporte prioritário</li>
+        </ul>
+        <button class="plan-btn plan-btn-accent">Começar grátis</button>
+      </div>
+
+      <div class="plan">
+        <div class="plan-label">Scale</div>
+        <div class="plan-price"><sup>R$</sup>397</div>
+        <div class="plan-cycle">/mês · alunos ilimitados</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li>Tudo do Pro</li>
+          <li>Multi-personal / equipe</li>
+          <li>API de integrações</li>
+          <li>Onboarding dedicado</li>
+          <li>SLA de suporte 4h</li>
+        </ul>
+        <button class="plan-btn plan-btn-outline">Falar com time</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="cta">
+  <div class="section-inner">
+    <div class="cta-box reveal">
+      <h2 class="cta-title">
+        Chega de aluno sumindo<br>
+        <em>sem você saber.</em>
+      </h2>
+      <p class="cta-sub">90 dias grátis. Sem cartão. Sem burocracia.</p>
+      <div class="cta-form">
+        <input type="email" class="cta-input" placeholder="seu@email.com">
+        <a href="#" class="btn-primary-lg" style="white-space:nowrap">Entrar na fila</a>
+      </div>
+      <p class="cta-fine">47 personais já entraram · Vagas limitadas para o beta</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <span class="footer-copy">© 2026 BG Academy · Feito para personal brasileiro</span>
+    <ul class="footer-links">
+      <li><a href="#">Termos</a></li>
+      <li><a href="#">Privacidade</a></li>
+      <li><a href="#">Contato</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Nav scroll effect
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 40) {
+      nav.style.borderBottomColor = 'rgba(255,255,255,0.1)';
+    } else {
+      nav.style.borderBottomColor = 'rgba(255,255,255,0.07)';
+    }
+  });
+</script>
+<!-- LOGIN MODAL -->
+<div id="login-overlay" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:999;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  align-items:center;
+  justify-content:center;
+" onclick="closeLoginOutside(event)">
+
+  <div id="login-modal" style="
+    background:#111113;
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:20px;
+    padding:48px 44px;
+    width:100%;
+    max-width:420px;
+    position:relative;
+    box-shadow:0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+    animation:loginIn 0.3s cubic-bezier(0.16,1,0.3,1) both;
+  ">
+    <!-- close -->
+    <button onclick="closeLogin()" style="
+      position:absolute;
+      top:16px;right:16px;
+      background:transparent;
+      border:none;
+      cursor:pointer;
+      color:#6B6B72;
+      padding:6px;
+      border-radius:8px;
+      display:flex;
+      transition:color 0.2s;
+    " onmouseover="this.style.color='#F2F2F0'" onmouseout="this.style.color='#6B6B72'">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <!-- logo -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:32px;">
+      <div style="width:32px;height:32px;background:#C8F047;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:16px;color:#0A0A0B;font-style:italic;flex-shrink:0;">B</div>
+      <span style="font-size:15px;font-weight:600;color:#F2F2F0;letter-spacing:-0.01em;">BG Academy</span>
+    </div>
+
+    <h2 style="font-size:24px;font-weight:300;color:#F2F2F0;letter-spacing:-0.02em;line-height:1.15;margin-bottom:6px;">
+      Bem-vindo de volta
+    </h2>
+    <p style="font-size:14px;color:#6B6B72;margin-bottom:32px;">Entre na sua conta para acessar o painel.</p>
+
+    <!-- email -->
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:12px;font-weight:500;color:#9A9AA5;margin-bottom:8px;letter-spacing:0.02em;text-transform:uppercase;">E-mail</label>
+      <input id="login-email" type="email" placeholder="seu@email.com" style="
+        width:100%;
+        background:#18181C;
+        border:1px solid rgba(255,255,255,0.1);
+        border-radius:10px;
+        padding:12px 16px;
+        font-size:14px;
+        color:#F2F2F0;
+        font-family:'DM Sans',sans-serif;
+        outline:none;
+        transition:border-color 0.2s;
+      " onfocus="this.style.borderColor='rgba(200,240,71,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+    </div>
+
+    <!-- senha -->
+    <div style="margin-bottom:8px;">
+      <label style="display:block;font-size:12px;font-weight:500;color:#9A9AA5;margin-bottom:8px;letter-spacing:0.02em;text-transform:uppercase;">Senha</label>
+      <div style="position:relative;">
+        <input id="login-senha" type="password" placeholder="••••••••" style="
+          width:100%;
+          background:#18181C;
+          border:1px solid rgba(255,255,255,0.1);
+          border-radius:10px;
+          padding:12px 44px 12px 16px;
+          font-size:14px;
+          color:#F2F2F0;
+          font-family:'DM Sans',sans-serif;
+          outline:none;
+          transition:border-color 0.2s;
+        " onfocus="this.style.borderColor='rgba(200,240,71,0.45)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+        <button onclick="toggleLoginPw()" style="
+          position:absolute;right:14px;top:50%;transform:translateY(-50%);
+          background:transparent;border:none;cursor:pointer;
+          color:#6B6B72;padding:0;display:flex;
+          transition:color 0.2s;
+        " onmouseover="this.style.color='#9A9AA5'" onmouseout="this.style.color='#6B6B72'">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <ellipse cx="8" cy="8" rx="7" ry="4.5" stroke="currentColor" stroke-width="1.2"/>
+            <circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.2"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div style="text-align:right;margin-bottom:28px;">
+      <a href="#" style="font-size:12px;color:#6B6B72;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#C8F047'" onmouseout="this.style.color='#6B6B72'">Esqueci minha senha</a>
+    </div>
+
+    <!-- submit -->
+    <button onclick="submitLogin()" style="
+      width:100%;
+      background:#C8F047;
+      color:#0A0A0B;
+      border:none;
+      border-radius:10px;
+      padding:13px;
+      font-size:14px;
+      font-weight:600;
+      font-family:'DM Sans',sans-serif;
+      cursor:pointer;
+      letter-spacing:-0.01em;
+      transition:background 0.2s, transform 0.15s;
+    " onmouseover="this.style.background='#9EE020';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#C8F047';this.style.transform='translateY(0)'">
+      Entrar
+    </button>
+
+    <p style="font-size:13px;color:#6B6B72;text-align:center;margin-top:24px;">
+      Não tem conta? <a href="#cta" onclick="closeLogin()" style="color:#C8F047;text-decoration:none;font-weight:500;">Começar grátis →</a>
+    </p>
+  </div>
+</div>
+
+<style>
+  @keyframes loginIn {
+    from { opacity:0; transform: scale(0.95) translateY(12px); }
+    to   { opacity:1; transform: scale(1)    translateY(0); }
+  }
+</style>
+
+<script>
+  function openLogin(e) {
+    e.preventDefault();
+    const overlay = document.getElementById('login-overlay');
+    overlay.style.display = 'flex';
+    requestAnimationFrame(() => {
+      document.getElementById('login-modal').style.animation = 'loginIn 0.3s cubic-bezier(0.16,1,0.3,1) both';
+    });
+    setTimeout(() => document.getElementById('login-email').focus(), 50);
+  }
+
+  function closeLogin() {
+    document.getElementById('login-overlay').style.display = 'none';
+  }
+
+  function closeLoginOutside(e) {
+    if (e.target === document.getElementById('login-overlay')) closeLogin();
+  }
+
+  function toggleLoginPw() {
+    const inp = document.getElementById('login-senha');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  }
+
+  function submitLogin() {
+    alert('→ Autenticação (conecte seu backend aqui)');
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeLogin();
+  });
+</script>
+
+</body>
+</html>
