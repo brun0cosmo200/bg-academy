@@ -1431,9 +1431,11 @@
       const res  = await fetch(`${API}/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       if (data.user) {
-        const dest = data.user.role === 'personal' ? '/dashboard-personal.html' : '/dashboard-aluno.html';
-        alert(`Olá, ${data.user.name}! ✓\n\nRedirecionando para o painel de ${data.user.role}...`);
-        // window.location.href = dest; // ativar quando os dashboards existirem
+        if (data.user.role === 'aluno') {
+          window.location.href = 'onboarding-aluno.html';
+        } else {
+          window.location.href = 'dashboard-personal.html';
+        }
       }
     } catch {}
   }
