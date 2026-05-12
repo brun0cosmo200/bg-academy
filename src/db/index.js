@@ -19,9 +19,20 @@ async function initDB() {
       password    VARCHAR(255),
       google_id   VARCHAR(255) UNIQUE,
       avatar      VARCHAR(500),
+      role        ENUM('personal','aluno') NOT NULL DEFAULT 'personal',
       created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `);
+
+  try {
+    await pool.execute(
+      "ALTER TABLE users ADD COLUMN role ENUM('personal','aluno') NOT NULL DEFAULT 'personal'"
+    );
+    console.log('✓ Coluna role adicionada');
+  } catch (e) {
+    console.log('✓ Coluna role já existe');
+  }
+
   console.log('✓ Tabela users pronta');
 }
 

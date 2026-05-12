@@ -7,7 +7,7 @@ const { pool } = require('../db');
 
 function makeToken(user) {
   return jwt.sign(
-    { id: user.id, email: user.email, name: user.name },
+    { id: user.id, email: user.email, name: user.name, role: user.role },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
   );
@@ -15,10 +15,13 @@ function makeToken(user) {
 
 // ── POST /auth/register ──────────────────────────────────────────
 router.post('/register', async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body;
 
   if (!name || !email || !password)
     return res.status(400).json({ error: 'Preencha nome, e-mail e senha.' });
+
+  if (!['personal', 'aluno'].includes(role))
+    return res.status(400).json({ error: 'Tipo de conta inválido.' });
 
   if (password.length < 8)
     return res.status(400).json({ error: 'Senha deve ter ao menos 8 caracteres.' });
@@ -32,11 +35,11 @@ router.post('/register', async (req, res) => {
 
     const hash = await bcrypt.hash(password, 12);
     const [result] = await pool.execute(
-      'INSERT INTO users (name, email, password) VALUES (?, ?, ?)',
-      [name, email, hash]
+      'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
+      [name, email, hash, role]
     );
 
-    const user = { id: result.insertId, name, email };
+    const user = { id: result.insertId, name, email, role };
     return res.status(201).json({ token: makeToken(user), user });
   } catch (err) {
     console.error(err);
@@ -50,7 +53,10 @@ router.post('/login', (req, res, next) => {
     if (err) return next(err);
     if (!user) return res.status(401).json({ error: info?.message || 'Credenciais inválidas.' });
 
-    return res.json({ token: makeToken(user), user: { id: user.id, name: user.name, email: user.email, avatar: user.avatar } });
+    return res.json({
+      token: makeToken(user),
+      user: { id: user.id, name: user.name, email: user.email, role: user.role, avatar: user.avatar }
+    });
   })(req, res, next);
 });
 
@@ -64,17 +70,15 @@ router.get('/google/callback',
   passport.authenticate('google', { session: false, failureRedirect: `${process.env.FRONTEND_URL}?auth=error` }),
   (req, res) => {
     const token = makeToken(req.user);
-    // Redireciona pro frontend com o token na query string
-    // O frontend pega e guarda no localStorage
     res.redirect(`${process.env.FRONTEND_URL}?token=${token}`);
   }
 );
 
-// ── GET /auth/me (rota protegida) ────────────────────────────────
+// ── GET /auth/me ─────────────────────────────────────────────────
 router.get('/me', authMiddleware, async (req, res) => {
   try {
     const [rows] = await pool.execute(
-      'SELECT id, name, email, avatar, created_at FROM users WHERE id = ?',
+      'SELECT id, name, email, avatar, role, created_at FROM users WHERE id = ?',
       [req.user.id]
     );
     if (!rows[0]) return res.status(404).json({ error: 'Usuário não encontrado.' });
