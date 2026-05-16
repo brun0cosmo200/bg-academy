@@ -1430,12 +1430,23 @@
     try {
       const res  = await fetch(`${API}/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-      if (data.user) {
-        if (data.user.role === 'aluno') {
-          window.location.href = 'onboarding-aluno.html';
-        } else {
-          window.location.href = 'dashboard-personal.html';
-        }
+      if (!data.user) return;
+
+      if (data.user.role === 'personal') {
+        window.location.href = 'dashboard-personal.html';
+        return;
+      }
+
+      // Aluno — verifica se já tem perfil
+      const pRes  = await fetch(`${API}/aluno/perfil`, { headers: { Authorization: `Bearer ${token}` } });
+      const pData = await pRes.json();
+
+      if (pData.perfil) {
+        // Perfil existe — vai pro dashboard
+        window.location.href = 'dashboard-aluno.html';
+      } else {
+        // Sem perfil — vai pro onboarding
+        window.location.href = 'onboarding-aluno.html';
       }
     } catch {}
   }

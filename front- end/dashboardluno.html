@@ -29,6 +29,7 @@
 }
 
 html, body { height: 100%; }
+body { visibility: hidden; }
 
 body {
   background: var(--black);
@@ -1114,6 +1115,7 @@ async function init() {
 
     const name = data.user.name;
     document.getElementById('sidebar-name').textContent = name;
+    document.body.style.visibility = 'visible';
     document.getElementById('sidebar-avatar').textContent = name.charAt(0).toUpperCase();
     document.getElementById('topbar-user').textContent = name;
 
